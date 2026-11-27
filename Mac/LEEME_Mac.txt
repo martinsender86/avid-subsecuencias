@@ -1,0 +1,122 @@
+SUBSECUENCIAS AVID  v1.2.4  -  Mac
+================================
+
+Crea una subsecuencia por cada corte de una secuencia, en el mismo bin,
+y las convierte en subclips (como AutoSync).
+Sirve para Mac Intel y Apple Silicon.
+
+
+PRIMERA VEZ
+-----------
+1. Descomprimí el zip donde quieras.
+2. Quitá la cuarentena de macOS: abrí la Terminal, escribí
+       xattr -cr
+   (con un espacio al final), arrastrá la carpeta Subsecuencias_Avid_Mac a la
+   Terminal y apretá Enter.
+3. Doble clic en Subsecuencias_Avid.command.
+   La primera vez arma su propio entorno de Python en
+   ~/.avid_scripts/venv_subsecuencias (baja pyavb y tkinterdnd2). Tarda un poco
+   y necesita internet. Las veces siguientes arranca directo.
+
+Hace falta un Python 3 con tkinter:
+- El de python.org lo trae (https://www.python.org/downloads/macos/).
+- El de Homebrew sirve si tiene python-tk:  brew install python-tk
+- El python3 de Apple se usa solo si están las Command Line Tools.
+Si no encuentra ninguno, el .command avisa y no hace nada.
+
+Si cambiás de Python y querés que rearme el entorno, borrá la carpeta
+~/.avid_scripts/venv_subsecuencias y volvé a abrir el .command.
+
+
+USO
+---
+1. En Avid, CERRÁ EL BIN (Avid puede quedar abierto).
+2. Doble clic en Subsecuencias_Avid.command y soltá el .avb en la ventana
+   (o "Elegir..."). En Mac no se puede soltar el bin sobre el .command.
+3. Elegí la secuencia y de qué pista salen los cortes:
+     V1 (por defecto), otra pista, "Todas las de video" o "Todas".
+4. "Previsualizar" muestra la lista de planos con su TC, sin tocar nada.
+5. "Crear subsecuencias" las agrega al bin.
+6. Volvé a abrir el bin en Avid.
+
+Nombre: patrón con {secuencia} {n} {clip} {tc}. Por defecto "{secuencia}_{n}"
+(n con tres cifras: _001, _002...). {clip} = nombre del clip del plano, si el
+master clip está en ese mismo bin.
+
+Opciones:
+- Ignorar add edits: si el mismo clip sigue sin salto, no se cuenta como corte.
+- Crear también los huecos: por defecto los tramos de relleno (negro) se saltean.
+
+
+SUBSECUENCIAS -> SUBCLIPS (botón 2, como AutoSync)
+--------------------------------------------------
+1. Elegí en la lista las subsecuencias a convertir (Ctrl/Cmd o Mayús para
+   varias). Después de "Crear subsecuencias" las nuevas ya quedan elegidas.
+2. "Previsualizar" muestra cuáles se pueden convertir, sin tocar nada.
+3. "Convertir en subclips".
+
+Cada subclip queda con una pista por cada pista de la subsecuencia, y cada una
+apunta al MISMO clip que estaba en la secuencia madre, igual que AutoSync:
+si en la madre había un subclip, el subclip nuevo apunta a ese subclip, y el
+match frame lleva primero a él y después al master. Si había un master clip,
+apunta al master. Los locators del plano se mantienen.
+
+Por defecto, el subclip REEMPLAZA a la subsecuencia y lleva su mismo nombre
+(pide confirmación). Con "Conservar las subsecuencias" quedan las dos y el
+subclip se llama "nombre.sync.01".
+
+FrameFlex: viaja al subclip, igual que con AutoSync. El encuadre es el del
+clip de origen. Si en el timeline se retocó el FrameFlex de un plano y quedó
+distinto al del clip, la app lo avisa (en Avid pasa lo mismo: el subclip toma
+el del clip de origen).
+
+Efectos en los clips (speed/motion effect, timewarp, color, resize, key,
+clip gain...): SE MANTIENEN en el subclip, igual que hace Avid. La pista del
+subclip lleva el efecto con el clip adentro, y la lista dice "(con efecto:
+...)". El clip de adentro sigue siendo el de la secuencia madre.
+Excepción: un efecto puesto sobre una pista vacía (por ejemplo un color en
+V2 encima de V1) no tiene clip debajo y no puede ir en el subclip: la app
+lo avisa.
+
+No se convierten (y lo avisa) las subsecuencias que tienen, en alguna pista:
+un corte, una transición, un multicam/group, una secuencia anidada o un hueco
+en parte del plano. Las pistas que están vacías se omiten.
+
+
+QUÉ HACE CON CADA PLANO (subsecuencias)
+---------------------------------------
+- Todas las pistas (video, audio, TC, edgecode) se recortan al tramo del plano.
+  Un sonido que entra antes del corte de imagen queda partido en ese corte.
+- El TC de la subsecuencia arranca en el TC que tenía ese plano en la secuencia.
+- Transiciones: las que caen enteras dentro del plano se conservan; las que
+  cruzan el borde se convierten en corte en su punto de corte.
+- Efectos, multicam/group, motion effects, automatización de audio y keyframes
+  se recortan y se corren al tramo. Los locators que caen en el plano se
+  mantienen en su lugar.
+- Si se vuelve a correr, las subsecuencias que ya existen con el mismo nombre
+  se saltean (no se duplican).
+
+
+SEGURIDAD
+---------
+- Antes de reemplazar el bin se guarda un backup en
+  <proyecto>/Trash/_Backup_Subsecuencias/  (si no encuentra el .avp, en
+  ~/.avid_subsecuencias/backups/).
+- El bin nuevo se escribe en un temporal, se relee para verificarlo y recién
+  ahí reemplaza al original.
+- Si Avid guardó el bin mientras el programa trabajaba, no toca nada y avisa.
+
+Si el bin queda abierto en Avid, Avid lo vuelve a guardar desde su memoria y
+borra las subsecuencias (el backup no se pierde, pero hay que repetir).
+
+
+A REVISAR EN AVID
+-----------------
+- Si un efecto de velocidad variable (timewarp con rampa) queda partido por un
+  corte, el programa avisa: revisá que la rampa quedó bien.
+
+
+SI ALGO FALLA
+-------------
+La ventana muestra el error en el recuadro de abajo; si falla antes de abrirse,
+la Terminal queda abierta con el mensaje. Copialo y pasalo.
