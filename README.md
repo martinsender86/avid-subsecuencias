@@ -11,7 +11,7 @@ Avid puede quedar abierto: solo hay que cerrar **ese bin**. Hace backup en `_Bac
 
 ## Requisitos
 
-- **Windows:** el `.exe` de Releases no necesita nada.
+- **Windows:** el `.exe` de la carpeta `descargas/` no necesita nada.
 - **Mac:** Python 3 con tkinter (el de python.org lo trae). La primera vez arma su propio entorno en `~/.avid_scripts/venv_subsecuencias` (baja `pyavb` y `tkinterdnd2`; necesita internet).
 
 ## Cómo se usa
