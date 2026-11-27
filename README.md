@@ -40,6 +40,6 @@ python Subsecuencias_Avid.py --cli BIN.avb --subclips --secuencia NOMBRE [--cons
 | `Mac/Subsecuencias_Avid.command` | Lanzador para Mac |
 | `Mac/LEEME_Mac.txt` | Instrucciones para Mac |
 
-## Descargas
+## Descargas (listo para usar)
 
-En **Releases**: `Subsecuencias_Avid.exe` (Windows) y `Subsecuencias_Avid_v1.2.4_Mac.zip`.
+En la carpeta **`descargas/`**: `Subsecuencias_Avid.exe` (Windows) y `Subsecuencias_Avid_v1.2.4_Mac.zip`.
